@@ -11,4 +11,4 @@ public class IceCream
 
 public enum IceCreamBase{CUP = 0, CONE = 1};
 public enum IceCreamFlavour{YELLOW = 0, BROWN = 1, PINK = 2, BLUE = 3};
-public enum IceCreamTopping{CHOCOLATTE_CHIPS = 0, RAINBOW_SPRINKLES = 1, GUMMY_BEARS = 2};
+public enum IceCreamTopping{CHOCOLATE_CHIPS = 0, RAINBOW_SPRINKLES = 1, GUMMY_BEARS = 2};
