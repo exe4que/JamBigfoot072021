@@ -9,7 +9,7 @@ public class Interactable : MonoBehaviour
 
     public void OnMouseDown()
     {
-        Debug.Log("On Mouse Down");
+        //Debug.Log("On Mouse Down");
         OnInteract?.Invoke();
     }
 
