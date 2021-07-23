@@ -5,6 +5,20 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
+    private static PlayerManager _instance;
+    public static PlayerManager Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = GameObject.FindObjectOfType<PlayerManager>();
+            }
+
+            return _instance;
+        }
+    }
+
     public int MaxFlavours = 3;
     public GameObject[] PrefabsBase;
     public GameObject[] PrefabsFlavours;
@@ -63,6 +77,7 @@ public class PlayerManager : MonoBehaviour
     {
         _emptyHand = true;
         _currentIceCream.Flavours.Clear();
+        _currentIceCream.Topping = IceCreamTopping.NONE;
         foreach (var o in _objectsOnHand)
         {
             Destroy(o);

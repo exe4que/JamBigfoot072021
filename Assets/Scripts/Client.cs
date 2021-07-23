@@ -10,7 +10,7 @@ public class Client
     public IceCream Order;
 
     private float _spawnTime;
-    public float Timer => TimerDuration - (Time.time - _spawnTime);
+    public float Timer => Mathf.Min((Time.time - _spawnTime) / TimerDuration, 1f);
 
     public void Initialize()
     {

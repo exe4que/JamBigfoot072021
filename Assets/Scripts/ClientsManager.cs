@@ -42,22 +42,30 @@ public class ClientsManager : MonoBehaviour, IClient
         int clientsAdded = 0;
         while (clientsAdded < ActiveClientsCount)
         {
-            if (!TryAddNewClient()) break;
+            Client c = null;
+            if (!TryAddNewClient(ref c)) break;
+
+            GameObject clientAvatarGO = Instantiate(ClientPrefab, this.ClientsLinePath[0].position, Quaternion.identity);
+            clientAvatarGO.GetComponent<ClientAvatar>().Initialize(c);
+
             clientsAdded++;
         }
     }
 
-    private bool TryAddNewClient()
+    private bool TryAddNewClient(ref Client c)
     {
         if (Clients.Count == 0)
         {
-            _isGameAlive = false; //out of clients
+            c = null;
             return false;
         }
         var client = Clients[0];
         Clients.RemoveAt(0);
+        Debug.Log($"Clients.Count = {Clients.Count}");
         ActiveClients.Add(client);
+        Debug.Log($"ActiveClients.Count = {ActiveClients.Count}");
         client.Initialize();
+        c = client;
         return true;
     }
 
@@ -73,7 +81,14 @@ public class ClientsManager : MonoBehaviour, IClient
         if (this.FrontClient.Order.Compare(iceCream))
         {
             ActiveClients.RemoveAt(0);
-            TryAddNewClient();
+
+            Client c = null;
+            if (TryAddNewClient(ref c))
+            {
+                GameObject clientAvatarGO = Instantiate(ClientPrefab, this.ClientsLinePath[0].position, Quaternion.identity);
+                clientAvatarGO.GetComponent<ClientAvatar>().Initialize(c);
+            }
+
             Debug.Log("Ice cream accepted!");
             return true;
         }
@@ -108,7 +123,7 @@ public class ClientsManager : MonoBehaviour, IClient
         for (int i = 0; i < ActiveClients.Count; i++)
         {
             Client activeClient = ActiveClients[i];
-            if (activeClient.Timer <= 0)
+            if (activeClient.Timer >= 1)
             {
                 ActiveClients.Remove(activeClient);
                 break;
@@ -116,11 +131,12 @@ public class ClientsManager : MonoBehaviour, IClient
         }
     }
 
-    private void OnDrawGizmos() {
+    private void OnDrawGizmos()
+    {
         for (int i = 1; i < this.ClientsLinePath.Length; i++)
         {
-            Gizmos.DrawLine(this.ClientsLinePath[i].transform.position, this.ClientsLinePath[i-1].transform.position);
-            
+            Gizmos.DrawLine(this.ClientsLinePath[i].transform.position, this.ClientsLinePath[i - 1].transform.position);
+
         }
     }
 }

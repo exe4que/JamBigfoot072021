@@ -27,15 +27,21 @@ public class IceCream
 
     public bool Compare(IceCream iceCreamToCompare)
     {
+        Debug.Log($"base: {Base} == compared base {iceCreamToCompare.Base}");
         if(this.Base != iceCreamToCompare.Base) return false;
+        Debug.Log($"flavour count: {Flavours.Count} == compared lavour count {iceCreamToCompare.Flavours.Count}");
         if(this.Flavours.Count != iceCreamToCompare.Flavours.Count) return false;
         for (int i = 0; i < this.Flavours.Count; i++)
         {
+            Debug.Log($"flavour: {Flavours[i]} == compared flavour {iceCreamToCompare.Flavours[i]}");
             if(this.Flavours[i] != iceCreamToCompare.Flavours[i]) return false;
         }
+        Debug.Log($"topping: {Topping} == compared topping {iceCreamToCompare.Topping}");
         if(this.Topping != iceCreamToCompare.Topping) return false;
         return true;
     }
+
+    
 }
 
 public enum IceCreamBase{CUP = 0, CONE = 1};
