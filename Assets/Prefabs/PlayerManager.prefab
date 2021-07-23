@@ -617,6 +617,76 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.9620112, y: 0.9845686}
   m_EdgeRadius: 0
+--- !u!1 &5716338253082486585
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8776328145085748615}
+  - component: {fileID: 1962538705488258684}
+  - component: {fileID: 6469027288465361369}
+  m_Layer: 0
+  m_Name: Fish
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8776328145085748615
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5716338253082486585}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.52, y: -4, z: 0}
+  m_LocalScale: {x: 1.7055, y: 1.7055, z: 1.7055}
+  m_Children: []
+  m_Father: {fileID: 2396815938806590788}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1962538705488258684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5716338253082486585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2312b1f8444f4664bad0a68aecf87e2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!61 &6469027288465361369
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5716338253082486585}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.0054315925, y: -0.02366601}
+  m_SpriteTilingProperty:
+    border: {x: 0.25, y: 0.25, z: 0.25, w: 0.25}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.984375, y: 0.984375}
+    newSize: {x: 1, y: 0.5}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1.9620112, y: 0.6756482}
+  m_EdgeRadius: 0
 --- !u!1 &5873429841536088492
 GameObject:
   m_ObjectHideFlags: 0
@@ -722,6 +792,7 @@ Transform:
   - {fileID: 5182252352356199875}
   - {fileID: 2043468331}
   - {fileID: 2102681113}
+  - {fileID: 8776328145085748615}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -750,6 +821,11 @@ MonoBehaviour:
   - {fileID: 6356924486482094367, guid: 304876aed97588f488505ab139453daf, type: 3}
   - {fileID: 6287058813434427137, guid: 9426d93784f8ca14bbbc8f8290d4f16a, type: 3}
   - {fileID: 1997174262411846415, guid: 418dc4888cb4edc4394dad3d38849488, type: 3}
+  PrefabsRandomOrders:
+  - {fileID: 1868838545562700915, guid: 182e4251f09277949a4c4b91539524a1, type: 3}
+  - {fileID: 1761773812183191633, guid: 2c5eb8e59fc2bfc4c98a22100972a904, type: 3}
+  - {fileID: 7447006899438649669, guid: 351c0a53180b7264388d697fcd9c519a, type: 3}
+  FishPrefab: {fileID: 1345248373045669510, guid: 08c11d65b5f40fa4eb1656d72c1faff1, type: 3}
   Hand: {fileID: 1843201256688255799}
   InteractablesBase:
   - {fileID: 7613936927541233883}
@@ -763,8 +839,12 @@ MonoBehaviour:
   - {fileID: 1887882600}
   - {fileID: 1022289838}
   - {fileID: 642053029}
-  TrasBin: {fileID: 5844304915010466032}
+  TrashBin: {fileID: 5844304915010466032}
   Client: {fileID: 0}
+  Fish: {fileID: 1962538705488258684}
+  CounterWithoutFish: {fileID: 21300000, guid: 330904b6061467c498a5e2789e91694e, type: 3}
+  CounterWithFish: {fileID: 21300000, guid: d71abcb7adb87904f90b277b5876aed6, type: 3}
+  Counter: {fileID: 6768300955982464640}
 --- !u!1 &6446124412407104672
 GameObject:
   m_ObjectHideFlags: 0
@@ -1003,7 +1083,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 05dc472358f630245a973c4a58e21b98, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5e5de1b4cbebd784892c4853fb132b59, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

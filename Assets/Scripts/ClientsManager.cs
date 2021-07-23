@@ -31,7 +31,7 @@ public class ClientsManager : MonoBehaviour, IClient
     public List<Client> Clients;
     public List<Client> ActiveClients = new List<Client>();
 
-    public Client FrontClient => ActiveClients[0];
+    public Client FrontClient => ActiveClients.Count > 0 ? ActiveClients[0]: null;
 
     private bool _isGameAlive = true;
 
@@ -78,17 +78,12 @@ public class ClientsManager : MonoBehaviour, IClient
     public bool TryReceive(IceCream iceCream)
     {
         if (!_isGameAlive) return false;
+        if(FrontClient == null) return false;
+        if(this.FrontClient.RandomOrder > -1) return false;
         if (this.FrontClient.Order.Compare(iceCream))
         {
-            ActiveClients.RemoveAt(0);
-
-            Client c = null;
-            if (TryAddNewClient(ref c))
-            {
-                GameObject clientAvatarGO = Instantiate(ClientPrefab, this.ClientsLinePath[0].position, Quaternion.identity);
-                clientAvatarGO.GetComponent<ClientAvatar>().Initialize(c);
-            }
-
+            ScoreManager.Instance.SumToScore(FrontClient.RemainingSeconds);
+            NextClient();
             Debug.Log("Ice cream accepted!");
             return true;
         }
@@ -96,6 +91,23 @@ public class ClientsManager : MonoBehaviour, IClient
         {
             Debug.Log("Ice cream rejected!");
             return false;
+        }
+    }
+
+    private void NextClient()
+    {
+        ActiveClients.RemoveAt(0);
+
+        Client c = null;
+        if (TryAddNewClient(ref c))
+        {
+            GameObject clientAvatarGO = Instantiate(ClientPrefab, this.ClientsLinePath[0].position, Quaternion.identity);
+            clientAvatarGO.GetComponent<ClientAvatar>().Initialize(c);
+        }
+
+        if(ActiveClients.Count == 0)
+        {
+            ScoreManager.Instance.GameOver();
         }
     }
 
@@ -138,5 +150,21 @@ public class ClientsManager : MonoBehaviour, IClient
             Gizmos.DrawLine(this.ClientsLinePath[i].transform.position, this.ClientsLinePath[i - 1].transform.position);
 
         }
+    }
+
+    public bool Punch()
+    {
+        if(FrontClient == null) return false;
+        this.GetComponent<AudioSource>().Play();
+        if(FrontClient.RandomOrder > -1)
+        {
+            ScoreManager.Instance.SumToScore(FrontClient.RemainingSeconds);
+            FrontClient.GetPunched();
+            NextClient();
+            return true;
+        }
+        FrontClient.GetPunched();
+        NextClient();
+        return false;
     }
 }

@@ -9,27 +9,43 @@ public class ClientAvatar : MonoBehaviour
     public Transform OrderTransform;
     public SpriteRenderer TimerFillSprite;
 
+    public SpriteRenderer Body;
+    public SpriteRenderer Head;
+
+    public Sprite[] BodySprites;
+    public Sprite[] HeadSprites;
+
     [Space]
     public Client Client;
 
     public float TargetPositionInLine;
 
     private float _currentNormalizedPosition = 0f;
+    private bool _punchAnimationPlayed = false;
 
     public void Initialize(Client client)
     {
+        this.Body.sprite = BodySprites[Random.Range(0, BodySprites.Length)];
+        this.Head.sprite = HeadSprites[Random.Range(0, HeadSprites.Length)];
         this.Client = client;
         _currentNormalizedPosition = 0f;
 
 
         var order = client.Order;
-        AddObjectToOrder(PlayerManager.Instance.PrefabsBase[(int)order.Base]);
-        foreach (var flavour in order.Flavours)
+        if (client.RandomOrder == -1)
         {
-            AddObjectToOrder(PlayerManager.Instance.PrefabsFlavours[(int)flavour]);
+            AddObjectToOrder(PlayerManager.Instance.PrefabsBase[(int)order.Base]);
+            foreach (var flavour in order.Flavours)
+            {
+                AddObjectToOrder(PlayerManager.Instance.PrefabsFlavours[(int)flavour]);
+            }
+            if (((int)order.Topping) > 0)
+                AddObjectToOrder(PlayerManager.Instance.PrefabsToppings[(int)order.Topping - 1]);
         }
-        if (((int)order.Topping) > 0)
-            AddObjectToOrder(PlayerManager.Instance.PrefabsToppings[(int)order.Topping - 1]);
+        else
+        {
+            AddObjectToOrder(PlayerManager.Instance.PrefabsRandomOrders[client.RandomOrder]);
+        }
     }
 
     public Vector3 GetPositionAlongTheLine(float normalizedPosition)
@@ -40,8 +56,6 @@ public class ClientAvatar : MonoBehaviour
         {
             segmentedNormalizedPosition -= 0.001f;
         }
-
-
 
         Transform to = path[(int)segmentedNormalizedPosition + 1];
         Transform from = path[((int)segmentedNormalizedPosition)];
@@ -61,11 +75,21 @@ public class ClientAvatar : MonoBehaviour
             OrderTransform.gameObject.SetActive(true);
         }
 
-        if (TargetPositionInLine < 0)
+        if (TargetPositionInLine < 0 || Client.Punched)
         {
+            if(Client.Punched && !_punchAnimationPlayed)
+            {
+                var animator = this.GetComponent<Animator>();
+                animator.Play("GetPunched");
+                _punchAnimationPlayed = true;
+            }
             if (OrderTransform.gameObject.activeSelf)
             {
                 OrderTransform.gameObject.SetActive(false);
+            }
+            if (TimerFillSprite.transform.parent.gameObject.activeSelf)
+            {
+                TimerFillSprite.transform.parent.gameObject.SetActive(false);
             }
             this.transform.position += Vector3.left * Speed * 10 * Time.deltaTime;
             if (this.transform.position.x < -7f)
@@ -93,7 +117,13 @@ public class ClientAvatar : MonoBehaviour
     {
         Transform b = Instantiate(go, OrderTransform).transform;
 
-        float baseOffset = (OrderTransform.childCount > 1 && OrderTransform.GetChild(1).name == "BaseCone(Clone)") ? 0.35f : 0f;
-        b.localPosition = new Vector3(0, baseOffset + OrderTransform.childCount * 0.5f, 0);
+        float baseOffset = (OrderTransform.childCount > 2 && OrderTransform.GetChild(1).name == "BaseCone(Clone)") ? 0.35f : 0f;
+
+        if (go.name.StartsWith("Topping"))
+        {
+            baseOffset -= 0.3f;
+        }
+        Debug.Log("base name: " + OrderTransform.GetChild(1).name + ", offset: " + baseOffset);
+        b.localPosition = new Vector3(0, baseOffset + OrderTransform.childCount * 0.5f, -OrderTransform.childCount * 0.01f);
     }
 }

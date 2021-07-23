@@ -23,14 +23,21 @@ public class PlayerManager : MonoBehaviour
     public GameObject[] PrefabsBase;
     public GameObject[] PrefabsFlavours;
     public GameObject[] PrefabsToppings;
+    public GameObject[] PrefabsRandomOrders;
+    public GameObject FishPrefab;
     public Transform Hand;
     public Interactable[] InteractablesBase;
     public Interactable[] InteractableFlavours;
     public Interactable[] InteractableToppings;
-    public Interactable TrasBin;
+    public Interactable TrashBin;
     public Interactable Client;
+    public Interactable Fish;
+    public Sprite CounterWithoutFish;
+    public Sprite CounterWithFish;
+    public SpriteRenderer Counter;
     private IceCream _currentIceCream;
     private bool _emptyHand;
+    private bool _fishInHand;
     private List<GameObject> _objectsOnHand;
 
 
@@ -40,7 +47,7 @@ public class PlayerManager : MonoBehaviour
         _currentIceCream = new IceCream();
         _currentIceCream.Flavours = new List<IceCreamFlavour>();
         _objectsOnHand = new List<GameObject>();
-        
+
         InteractablesBase[0].OnInteract += () => AddBase(IceCreamBase.CUP);
         InteractablesBase[1].OnInteract += () => AddBase(IceCreamBase.CONE);
 
@@ -53,17 +60,26 @@ public class PlayerManager : MonoBehaviour
         InteractableToppings[1].OnInteract += () => AddTopping((IceCreamTopping)2);
         InteractableToppings[2].OnInteract += () => AddTopping((IceCreamTopping)3);
 
-        TrasBin.OnInteract += TrashIceCream;
+        TrashBin.OnInteract += TrashIceCream;
 
         Client.OnInteract += GiveIceCreamToClient;
+
+        Fish.OnInteract += () => AddFish();
     }
 
     private void GiveIceCreamToClient()
     {
-        bool accepted = Client.GetComponent<IClient>().TryReceive(_currentIceCream);
-        if(accepted)
+        if (_fishInHand)
         {
-            TrashIceCream();
+            Client.GetComponent<IClient>().Punch();
+        }
+        else
+        {
+            bool accepted = Client.GetComponent<IClient>().TryReceive(_currentIceCream);
+            if (accepted)
+            {
+                TrashIceCream();
+            }
         }
     }
 
@@ -74,6 +90,14 @@ public class PlayerManager : MonoBehaviour
     }
 
     private void TrashIceCream()
+    {
+        if (!_fishInHand)
+        {
+            TrashInternal();
+        }
+    }
+
+    private void TrashInternal()
     {
         _emptyHand = true;
         _currentIceCream.Flavours.Clear();
@@ -87,7 +111,7 @@ public class PlayerManager : MonoBehaviour
 
     private void AddBase(IceCreamBase type)
     {
-        if (_emptyHand)
+        if (_emptyHand && !_fishInHand)
         {
             _currentIceCream.Base = type;
             _emptyHand = false;
@@ -95,9 +119,29 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    private void AddFish()
+    {
+        if (_emptyHand)
+        {
+            if (_fishInHand)
+            {
+                Counter.sprite = CounterWithFish;
+                TrashInternal();
+                _fishInHand = false;
+            }
+            else
+            {
+                Counter.sprite = CounterWithoutFish;
+                AddObjectToHand(FishPrefab);
+                _fishInHand = true;
+            }
+        }
+    }
+
+
     private void AddFlavour(IceCreamFlavour flavour)
     {
-        if (!_emptyHand && _currentIceCream.Flavours.Count < MaxFlavours)
+        if (!_emptyHand && !_fishInHand && _currentIceCream.Flavours.Count < MaxFlavours)
         {
             _currentIceCream.Flavours.Add(flavour);
             AddObjectToHand(PrefabsFlavours[(int)flavour]);
@@ -106,7 +150,7 @@ public class PlayerManager : MonoBehaviour
 
     private void AddTopping(IceCreamTopping topping)
     {
-        if (!_emptyHand && _currentIceCream.Flavours.Count > 0 && _currentIceCream.Topping == 0)
+        if (!_fishInHand && !_emptyHand && _currentIceCream.Flavours.Count > 0 && _currentIceCream.Topping == 0)
         {
             _currentIceCream.Topping = topping;
             AddObjectToHand(PrefabsToppings[(int)topping - 1]);
@@ -119,6 +163,10 @@ public class PlayerManager : MonoBehaviour
         _objectsOnHand.Add(b.gameObject);
 
         float baseOffset = (_currentIceCream.Base == IceCreamBase.CONE && _objectsOnHand.Count > 1) ? 0.35f : 0f;
-        b.localPosition = new Vector3(0, baseOffset + _objectsOnHand.Count * 0.5f, 0);
+        if (go.name.StartsWith("Topping"))
+        {
+            baseOffset -= 0.3f;
+        }
+        b.localPosition = new Vector3(0, baseOffset + _objectsOnHand.Count * 0.5f, -_objectsOnHand.Count * 0.01f);
     }
 }

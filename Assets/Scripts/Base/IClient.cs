@@ -5,4 +5,5 @@ using UnityEngine;
 public interface IClient
 {
     bool TryReceive(IceCream iceCream);
+    bool Punch();
 }
