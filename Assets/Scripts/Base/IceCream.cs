@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class IceCream
 {
     public IceCreamBase Base;
-    public List<IceCreamFlavour> Flavours;
+    public IceCreamFlavour[] Flavours;
     public IceCreamTopping Topping;
 }
 
