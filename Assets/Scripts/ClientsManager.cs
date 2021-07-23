@@ -22,8 +22,11 @@ public class ClientsManager : MonoBehaviour, IClient
     }
 
     public int ActiveClientsCount = 5;
+    public GameObject ClientPrefab;
 
+    public Transform[] ClientsLinePath;
 
+    [Space]
     public TextAsset Json;
     public List<Client> Clients;
     public List<Client> ActiveClients = new List<Client>();
@@ -110,6 +113,14 @@ public class ClientsManager : MonoBehaviour, IClient
                 ActiveClients.Remove(activeClient);
                 break;
             }
+        }
+    }
+
+    private void OnDrawGizmos() {
+        for (int i = 1; i < this.ClientsLinePath.Length; i++)
+        {
+            Gizmos.DrawLine(this.ClientsLinePath[i].transform.position, this.ClientsLinePath[i-1].transform.position);
+            
         }
     }
 }
